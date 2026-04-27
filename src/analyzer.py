@@ -14,6 +14,7 @@ import json
 import logging
 import math
 import time
+import os
 from dataclasses import dataclass
 from typing import Optional, Dict, Any, List, Tuple, Callable
 
@@ -1180,6 +1181,11 @@ class GeminiAnalyzer:
                 }
                 if extra:
                     call_kwargs["extra_body"] = extra
+                # 注入 AiHubMix APP-Code 优惠标识
+                app_code = os.environ.get("AIHUBMIX_APP_CODE", "")
+                if app_code and config.openai_base_url and "aihubmix" in config.openai_base_url:
+                    call_kwargs["extra_headers"] = call_kwargs.get("extra_headers", {})
+                    call_kwargs["extra_headers"]["APP-Code"] = app_code
 
                 if stream:
                     try:
